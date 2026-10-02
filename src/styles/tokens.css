@@ -1,0 +1,35 @@
+:root {
+  /* Keith L. Goode brand palette (source: Brand Library, Figma) */
+  --obsidian: #171C1E;
+  --graphite: #2B2F31;
+  --mid-gray: #6B7073;
+  --light-gray: #D9DDDE;
+  --mineral-white: #F2F4F2;
+  --deep-blue: #174A63;
+  --illuminated-blue: #3A88A8;
+
+  /* Semantic */
+  --bg: var(--mineral-white);
+  --bg-alt: #FFFFFF;
+  --text: var(--graphite);
+  --heading: var(--obsidian);
+  --heading-2: var(--deep-blue);
+  --link: var(--deep-blue);                /* 8.65:1 on Mineral White (AA). Illuminated Blue is only 3.61:1 */
+  --link-hover: var(--obsidian);
+  --link-on-dark: var(--mineral-white);    /* 15.56:1 on Obsidian. Illuminated Blue is 4.31:1, below AA */
+  --link-on-dark-hover: var(--light-gray);
+  --text-muted: var(--mid-gray);
+  --rule: var(--light-gray);
+  --accent: var(--deep-blue);
+  --accent-hover: var(--illuminated-blue);
+  --on-dark: var(--mineral-white);
+  --on-dark-muted: var(--light-gray);
+
+  /* Type */
+  --font-heading: 'Trebuchet MS', Arial, sans-serif;
+  --font-body: 'Source Sans 3 Variable', Arial, sans-serif;
+
+  --measure: 68ch;
+  --wrap: 1120px;
+  --space: clamp(1rem, 2.5vw, 1.5rem);
+}

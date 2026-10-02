@@ -1,0 +1,38 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const all = await getCollection('articles', (e) => !e.data.draft);
+  return all.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const fmt = (x: Date) => x.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.title,
+  description: d.summary,
+  datePublished: d.publishedDate.toISOString(),
+  dateModified: (d.updatedDate ?? d.publishedDate).toISOString(),
+  author: { '@type': 'Person', name: 'Keith L. Goode', alternateName: 'Keith Goode', url: 'https://keithgoode.com/' },
+  mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href,
+};
+---
+<Base title={d.title} description={d.summary} type="article">
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <section class="section">
+    <div class="wrap prose">
+      <p class="eyebrow">{d.topic}</p>
+      <h1>{d.title}</h1>
+      <p class="meta">
+        <time datetime={d.publishedDate.toISOString()}>{fmt(d.publishedDate)}</time>
+        {d.updatedDate && <> · Updated <time datetime={d.updatedDate.toISOString()}>{fmt(d.updatedDate)}</time></>}
+      </p>
+      <Content />
+      <p>{d.disciplines.map((t) => <span class="tag">{t}</span>)}</p>
+    </div>
+  </section>
+</Base>

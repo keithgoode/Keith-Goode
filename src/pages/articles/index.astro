@@ -1,0 +1,46 @@
+---
+import Base from '../../layouts/Base.astro';
+import Card from '../../components/Card.astro';
+import { getCollection } from 'astro:content';
+import archive from '../../../content/archive/archived-articles.json';
+
+const all = (await getCollection('articles', (e) => !e.data.draft))
+  .sort((a, b) => b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf());
+const archived = [...archive.items].sort((a, b) => b.date.localeCompare(a.date));
+const fmtDay = (d: string) => new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', timeZone: 'UTC' });
+---
+<Base title="Articles" description="Articles on SEO, search strategy and digital product management.">
+  <section class="section">
+    <div class="wrap">
+      <p class="eyebrow">Writing</p>
+      <h1>Articles</h1>
+      <h2 class="visually-hidden">All articles</h2>
+      <div class="grid">
+        {all.map((a) => (
+          <Card href={`/articles/${a.id}/`} title={a.data.title} meta={`${a.data.topic} · ${fmt(a.data.publishedDate)}`} summary={a.data.summary} tags={a.data.disciplines} />
+        ))}
+      </div>
+      {all.length === 0 && <p>No articles published yet.</p>}
+
+      <div class="archive">
+        <h2>{archive.title}</h2>
+        <p>Earlier pieces I wrote for other publishers.</p>
+        <ul class="archive-list">
+          {archived.map((a) => (
+            <li>
+              {a.url ? <a href={a.url} rel="noopener">{a.title}</a> : a.title}
+              <span class="archive-meta"> — {a.publisher}, {fmtDay(a.date)}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+  .archive { margin-top: 3.5rem; }
+  .archive-list { list-style: none; padding: 0; margin: 1rem 0 0; }
+  .archive-list li { padding: 0.6rem 0; border-top: 1px solid var(--light-gray); }
+  .archive-meta { color: var(--text-muted); font-size: 0.95rem; }
+</style>

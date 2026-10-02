@@ -1,0 +1,30 @@
+{
+  "title": "Keith L. Goode",
+  "description": "Keith L. Goode is an SEO product manager with 20+ years in search and website optimization, focused on search, AI visibility, and digital strategy.",
+  "blocks": [
+    {
+      "_template": "hero",
+      "eyebrow": "Search, AI Visibility, and Digital Strategy",
+      "headline": "Clarity in Complex Systems",
+      "subhead": "Measured analysis. Clear priorities. Better outcomes.",
+      "ctaLabel": "View case studies",
+      "ctaUrl": "/case-studies/"
+    },
+    {
+      "_template": "featuredCaseStudies",
+      "heading": "Selected work",
+      "count": 3
+    },
+    {
+      "_template": "featuredArticles",
+      "heading": "Recent writing",
+      "count": 3
+    },
+    {
+      "_template": "cta",
+      "heading": "Discuss your search and AI visibility strategy.",
+      "label": "Get in touch",
+      "url": "/contact/"
+    }
+  ]
+}

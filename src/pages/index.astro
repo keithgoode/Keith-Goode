@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import Blocks from '../components/Blocks.astro';
+import home from '../../content/pages/home.json';
+
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Keith L. Goode',
+  alternateName: 'Keith Goode',
+  jobTitle: 'SEO Product Manager',
+  url: 'https://keithgoode.com/',
+};
+---
+<Base title={home.title} description={home.description}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(person)} />
+  <Blocks blocks={home.blocks} />
+</Base>

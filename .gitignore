@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+tina/__generated__/
+.DS_Store
+public/admin/
+public/.htaccess

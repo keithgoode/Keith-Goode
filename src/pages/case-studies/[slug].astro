@@ -1,0 +1,35 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const all = await getCollection('caseStudies', (e) => !e.data.draft);
+  return all.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+---
+<Base title={d.title} description={d.summary} type="article">
+  <section class="section">
+    <div class="wrap prose">
+      <p class="eyebrow">{d.industry}{d.client ? ` · ${d.client}` : ''}</p>
+      <h1>{d.title}</h1>
+      <p class="lede">{d.summary}</p>
+      {d.outcomes.length > 0 && (
+        <dl class="outcomes">
+          {d.outcomes.map((o) => (<div><dt>{o.metric}</dt><dd>{o.label}</dd></div>))}
+        </dl>
+      )}
+      <Content />
+      <p>{d.disciplines.map((t) => <span class="tag">{t}</span>)}</p>
+    </div>
+  </section>
+</Base>
+<style>
+  .lede { font-size: 1.3rem; color: var(--text-muted); }
+  .outcomes { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin: 2rem 0; }
+  .outcomes div { border-top: 3px solid var(--illuminated-blue); padding-top: 0.5rem; }
+  dt { font-family: var(--font-heading); font-weight: 700; font-size: 2rem; color: var(--accent); }
+  dd { margin: 0; color: var(--text-muted); }
+</style>

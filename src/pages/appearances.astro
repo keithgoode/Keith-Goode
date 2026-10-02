@@ -1,0 +1,95 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const all = (await getCollection('appearances', (e) => !e.data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const now = new Date();
+const upcoming = all.filter((a) => a.data.date >= now).reverse();
+const past = all.filter((a) => a.data.date < now);
+const years = [...new Set(past.map((a) => a.data.date.getUTCFullYear()))];
+const types = [...new Set(all.map((a) => a.data.type))];
+const fmt = (d: Date, precision: string = 'day') => {
+  if (precision === 'year') return String(d.getUTCFullYear());
+  const opts: Intl.DateTimeFormatOptions = precision === 'month'
+    ? { year: 'numeric', month: 'short', timeZone: 'UTC' }
+    : { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' };
+  return d.toLocaleDateString('en-US', opts);
+};
+---
+<Base title="Appearances" description="Talks, podcasts, videos, press and awards.">
+  <section class="section">
+    <div class="wrap">
+      <p class="eyebrow">Speaking and media</p>
+      <h1>Appearances</h1>
+
+      {types.length > 1 && (
+        <div class="filters" role="group" aria-label="Filter by type">
+          <button type="button" data-filter="all" aria-pressed="true">All</button>
+          {types.map((t) => <button type="button" data-filter={t} aria-pressed="false">{t}</button>)}
+        </div>
+      )}
+
+      {upcoming.length > 0 && (
+        <div class="group">
+          <h2>Upcoming</h2>
+          <ul class="list">
+            {upcoming.map((a) => (
+              <li data-type={a.data.type}>
+                <span class="date">{fmt(a.data.date, a.data.datePrecision)}</span>
+                <span class="body">
+                  {a.data.url ? <a href={a.data.url}>{a.data.title}</a> : a.data.title}
+                  {a.data.event && <span class="meta"> · {a.data.event}</span>}
+                </span>
+                <span class="tag">{a.data.type}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {years.map((year) => (
+        <div class="group">
+          <h2>{year}</h2>
+          <ul class="list">
+            {past.filter((a) => a.data.date.getUTCFullYear() === year).map((a) => (
+              <li data-type={a.data.type}>
+                <span class="date">{fmt(a.data.date, a.data.datePrecision)}</span>
+                <span class="body">
+                  {a.data.url ? <a href={a.data.url}>{a.data.title}</a> : a.data.title}
+                  {a.data.event && <span class="meta"> · {a.data.event}</span>}
+                </span>
+                <span class="tag">{a.data.type}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      {all.length === 0 && <p>No appearances listed yet.</p>}
+    </div>
+  </section>
+</Base>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const items = document.querySelectorAll<HTMLElement>('li[data-type]');
+  buttons.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const f = btn.dataset.filter;
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      items.forEach((li) => { li.hidden = f !== 'all' && li.dataset.type !== f; });
+    })
+  );
+</script>
+
+<style>
+  .group { margin-top: 2.5rem; }
+  .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0 0; }
+  .filters button { font: inherit; font-size: 0.95rem; padding: 0.35rem 0.9rem; border: 1px solid var(--mid-gray); background: var(--bg-alt); color: var(--text); border-radius: 999px; cursor: pointer; }
+  .filters button[aria-pressed='true'] { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { display: grid; grid-template-columns: 8rem 1fr auto; gap: 1rem; align-items: baseline; padding: 0.9rem 0; border-top: 1px solid var(--rule); }
+  .list li[hidden] { display: none; }
+  .date { color: var(--text-muted); font-size: 0.95rem; }
+  @media (max-width: 600px) { .list li { grid-template-columns: 1fr; gap: 0.25rem; } }
+</style>

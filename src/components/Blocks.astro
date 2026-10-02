@@ -1,0 +1,70 @@
+---
+import { getCollection } from 'astro:content';
+import Card from './Card.astro';
+
+const { blocks } = Astro.props;
+
+const caseStudies = (await getCollection('caseStudies', (e) => !e.data.draft));
+const articles = (await getCollection('articles', (e) => !e.data.draft))
+  .sort((a, b) => b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf());
+---
+{blocks.map((b: any) => {
+  switch (b._template) {
+    case 'hero':
+      return (
+        <section class="section section--dark">
+          <div class="wrap">
+            {b.eyebrow && <p class="eyebrow">{b.eyebrow}</p>}
+            <h1>{b.headline}</h1>
+            {b.subhead && <p class="prose lede">{b.subhead}</p>}
+            {b.ctaLabel && <a class="btn" href={b.ctaUrl}>{b.ctaLabel}</a>}
+          </div>
+        </section>
+      );
+    case 'featuredCaseStudies': {
+      const items = caseStudies.filter((c) => c.data.featured).slice(0, b.count ?? 3);
+      const list = items.length ? items : caseStudies.slice(0, b.count ?? 3);
+      return list.length ? (
+        <section class="section">
+          <div class="wrap">
+            <h2>{b.heading}</h2>
+            <div class="grid">
+              {list.map((c) => (
+                <Card href={`/case-studies/${c.id}/`} title={c.data.title} meta={c.data.industry} summary={c.data.summary} tags={c.data.disciplines} />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null;
+    }
+    case 'featuredArticles': {
+      const list = articles.slice(0, b.count ?? 3);
+      return list.length ? (
+        <section class="section">
+          <div class="wrap">
+            <h2>{b.heading}</h2>
+            <div class="grid">
+              {list.map((a) => (
+                <Card href={`/articles/${a.id}/`} title={a.data.title} meta={a.data.topic} summary={a.data.summary} tags={a.data.disciplines} />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null;
+    }
+    case 'cta':
+      return (
+        <section class="section section--dark">
+          <div class="wrap">
+            <h2>{b.heading}</h2>
+            <a class="btn" href={b.url}>{b.label}</a>
+          </div>
+        </section>
+      );
+    default:
+      return null;
+  }
+})}
+<style>
+  .lede { font-size: 1.3rem; color: var(--light-gray); margin-bottom: 1.75rem; }
+</style>

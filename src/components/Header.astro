@@ -1,0 +1,41 @@
+---
+const nav = [
+  { href: '/case-studies/', label: 'Case Studies' },
+  { href: '/articles/', label: 'Articles' },
+  { href: '/appearances/', label: 'Appearances' },
+  { href: '/about/', label: 'About' },
+  { href: '/contact/', label: 'Contact' },
+];
+const path = Astro.url.pathname;
+---
+<header class="site-header">
+  <div class="wrap bar">
+    <!-- Reversed lockup: dark symbol + Trebuchet MS Bold wordmark on Obsidian Charcoal -->
+    <a class="lockup" href="/" aria-label="Keith L. Goode, home">
+      <img src="/images/kg-symbol-dark.png" alt="" width="32" height="44" />
+      <span class="wordmark">Keith L. Goode</span>
+    </a>
+    <nav aria-label="Primary">
+      <ul>
+        {nav.map((n) => (
+          <li><a href={n.href} aria-current={path.startsWith(n.href) ? 'page' : undefined}>{n.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+<style>
+  .site-header { background: var(--obsidian); }
+  .bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 2rem; padding-block: 1.25rem; }
+  .lockup { display: inline-flex; align-items: center; gap: 1rem; text-decoration: none; }
+  .lockup img { display: block; width: 32px; height: 44px; }
+  .wordmark { font-family: var(--font-heading); font-weight: 700; font-size: 1.5rem; line-height: 1.1; color: var(--mineral-white); }
+  ul { display: flex; flex-wrap: wrap; gap: 1.5rem; list-style: none; margin: 0; padding: 0; }
+  nav a { color: var(--light-gray); text-decoration: none; font-size: 1rem; padding-block: 0.25rem; border-bottom: 2px solid transparent; }
+  nav a:hover { color: var(--mineral-white); border-bottom-color: var(--illuminated-blue); }
+  @media (max-width: 480px) {
+    ul { gap: 0.9rem; }
+    nav a { font-size: 0.9rem; }
+  }
+  nav a[aria-current='page'] { color: var(--mineral-white); border-bottom-color: var(--illuminated-blue); }
+</style>
